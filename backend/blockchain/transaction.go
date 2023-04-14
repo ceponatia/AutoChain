@@ -1,4 +1,4 @@
-package block
+package blockchain
 
 type Transaction struct {
 	From   string  `json:"from"`
