@@ -1,19 +1,13 @@
-package blockchain
+package pos
 
-import (
-	"math/rand"
-	"time"
-)
+import "time"
 
-// Validator represents a validator participating in the consensus process.
 type Validator struct {
 	Address       string
 	Stake         float64
 	StakingPeriod time.Duration
 }
 
-// SelectValidator selects the next validator for block creation based on the weighted staking mechanism.
-// This is a placeholder function and should be replaced with the actual weighted staking implementation.
-func SelectValidator(validators []*Validator) *Validator {
-	return validators[rand.Intn(len(validators))]
+func NewValidator(address string, stake float64, stakingPeriod time.Duration) *Validator {
+	return &Validator{Address: address, Stake: stake, StakingPeriod: stakingPeriod}
 }

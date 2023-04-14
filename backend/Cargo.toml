@@ -1,0 +1,2 @@
+[dependencies]
+ed25519-dalek = "1.0.1"

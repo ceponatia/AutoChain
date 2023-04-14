@@ -1,31 +1,12 @@
-package blockchain
+package block
 
-import "sync"
-
-var (
-	transactionPool []*Transaction
-	poolMutex       sync.Mutex
-)
-
-// AddTransactionToPool adds a transaction to the transaction pool.
-func AddTransactionToPool(tx *Transaction) {
-	poolMutex.Lock()
-	defer poolMutex.Unlock()
-
-	transactionPool = append(transactionPool, tx)
+type Transaction struct {
+	From   string  `json:"from"`
+	To     string  `json:"to"`
+	Amount float64 `json:"amount"`
+	Fee    float64 `json:"fee"`
 }
 
-// GetTransactionsFromPool retrieves a set of transactions from the pool for a new block.
-func GetTransactionsFromPool(maxTransactions int) []*Transaction {
-	poolMutex.Lock()
-	defer poolMutex.Unlock()
-
-	if len(transactionPool) < maxTransactions {
-		maxTransactions = len(transactionPool)
-	}
-
-	selectedTransactions := transactionPool[:maxTransactions]
-	transactionPool = transactionPool[maxTransactions:]
-
-	return selectedTransactions
+func NewTransaction(from string, to string, amount float64, fee float64) *Transaction {
+	return &Transaction{From: from, To: to, Amount: amount, Fee: fee}
 }
