@@ -40,7 +40,7 @@ impl WeightedStaking {
 
         for validator in &self.validators {
             let held_duration = current_time - validator.staking_start;
-            let weight = validator.stake * held_duration as f64;
+            let weight = validator.stake * (held_duration * 2) as f64;
 
             if weight > max_weight {
                 max_weight = weight;

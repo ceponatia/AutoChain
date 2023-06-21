@@ -1,22 +1,28 @@
 package blockchain
 
 import (
-	"errors"
-	"sync"
 	"crypto/sha256"
 	"encoding/hex"
-	"strconv"
-	"time"
 	"encoding/json"
+	"errors"
 	"fmt"
-	"log"
 	"net/http"
+	"strconv"
 	"sync"
-	"github.com/ceponatia/autochain/backend/blockchain/block"
+	"time"
 )
 
+type block struct {
+	Index        int
+	Timestamp    string
+	Transactions []*Transaction
+	PrevHash     string
+	Hash         string
+	Validator    string
+}
+
 var (
-	chain           []*block.Block
+	chain           []*block
 	transactionPool []*block.Transaction
 	mtx             sync.RWMutex
 )
@@ -117,15 +123,20 @@ func (bm *blockManager) CreateGenesisBlock() *Block {
 	return bm.CreateBlock(0, transactions, "0", "")
 }
 
-var (
-	transactionPool = []*block.Transaction{}
-	mtx             sync.RWMutex
-)
-
 func TransactionHandler(w http.ResponseWriter, r *http.Request) {
 	switch r.Method {
 	case "POST":
 		transaction := &block.Transaction{}
 		err := json.NewDecoder(r.Body).Decode(transaction)
 		if err != nil {
-			http.Error(w, err
+			http.Error(w, err.Error(), http.StatusBadRequest)
+			return
+		}
+		if transaction.From == "" || transaction.To == "" || transaction.Amount <= 0 {
+			http.Error(w, "invalid transaction", http.StatusBadRequest)
+			return
+		}
+		AddTransactionToPool(transaction)
+		fmt.Fprintf(w, "Transaction added to pool")
+	}
+}
